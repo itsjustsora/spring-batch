@@ -3,6 +3,7 @@ package dev.lab.springbatch.configuration;
 import static javax.xml.transform.OutputKeys.*;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -24,6 +25,10 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import dev.lab.springbatch.domain.Movie;
+import dev.lab.springbatch.jobs.AggregateMovieProcessor;
+import dev.lab.springbatch.jobs.MovieFooter;
+import dev.lab.springbatch.jobs.MovieHeader;
+import dev.lab.springbatch.jobs.MovieLineAggregator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,8 +40,12 @@ public class FileJobConfiguration {
     public static final int CHUNK_SIZE = 100;
     public static final String ENCODING = "UTF-8";
 
+    private final ConcurrentHashMap<String, Integer> aggregateInfos = new ConcurrentHashMap<>();
+
     private final PlatformTransactionManager transactionManager;
     private final JobRepository jobRepository;
+
+    private final ItemProcessor<Movie, Movie> itemProcessor = new AggregateMovieProcessor(aggregateInfos);
 
     @Bean
     public Step flatFileStep() {
@@ -45,6 +54,7 @@ public class FileJobConfiguration {
         return new StepBuilder("flatFileStep", jobRepository)
             .<Movie, Movie>chunk(CHUNK_SIZE, transactionManager)
             .reader(flatFileItemReader())
+            .processor(itemProcessor)
             .writer(flatFileItemWriter())
             .build();
     }
@@ -78,7 +88,13 @@ public class FileJobConfiguration {
             .encoding(ENCODING)
             .delimited().delimiter(",")
             .names("title", "genre", "year")
+            .append(false)
+            .lineAggregator(new MovieLineAggregator())
+            .headerCallback(new MovieHeader())
+            .footerCallback(new MovieFooter(aggregateInfos))
             .build();
 
     }
+
+
 }
