@@ -30,13 +30,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Configuration
+// @Configuration
 public class JdbcPagingReaderJobConfiguration {
 
     public static final int CHUNK_SIZE = 2;
     public static final String ENCODING = "UTF-8";
 
-    @Autowired
+    // @Autowired
     DataSource dataSource;
 
     @Bean
