@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Configuration
+// @Configuration
 @RequiredArgsConstructor
 public class JdbcPagingWriterJobConfiguration {
 
@@ -33,7 +33,7 @@ public class JdbcPagingWriterJobConfiguration {
     private final PlatformTransactionManager transactionManager;
     private final JobRepository jobRepository;
 
-    @Autowired
+    // @Autowired
     private DataSource dataSource;
 
     @Bean
