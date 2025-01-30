@@ -8,7 +8,7 @@ spring:
 #    jdbc:
 #      initialize-schema: always
     job:
-      name: MYBATIS_CHUNK_JOB
+      name: MYBATIS_WRITER_JOB
   jpa:
     hibernate:
       ddl-auto: update

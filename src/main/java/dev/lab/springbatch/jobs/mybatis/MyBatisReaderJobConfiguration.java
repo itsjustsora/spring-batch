@@ -66,7 +66,7 @@ public class MyBatisReaderJobConfiguration {
     }
 
     @Bean
-    public Job customerJdbcCursorPagingJob() {
+    public Job movieJdbcCursorPagingJob() {
         log.info("------------------ Init movieJdbcCursorPagingJob -----------------");
 
         return new JobBuilder(MYBATIS_CHUNK_JOB, jobRepository)

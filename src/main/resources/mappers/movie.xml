@@ -17,4 +17,8 @@
         FROM movie
         LIMIT #{_skiprows}, #{_pagesize}
     </select>
+
+    <insert id="insertMovies" parameterType="dev.lab.springbatch.jobs.domain.Movie">
+        INSERT INTO movie2(title, genre, year) VALUES (#{title}, #{genre}, #{year});
+    </insert>
 </mapper>
