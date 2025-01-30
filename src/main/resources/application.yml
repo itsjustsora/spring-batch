@@ -5,8 +5,10 @@ spring:
     username: admin
     password: 1234
   batch:
-    jdbc:
-      initialize-schema: always
+#    jdbc:
+#      initialize-schema: always
+    job:
+      name: JPA_ITEM_WRITER_JOB
   jpa:
     hibernate:
       ddl-auto: update

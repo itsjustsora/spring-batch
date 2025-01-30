@@ -1,10 +1,8 @@
-package dev.lab.springbatch.jobs;
-
-import java.util.concurrent.ConcurrentHashMap;
+package dev.lab.springbatch.jobs.basic;
 
 import org.springframework.batch.item.file.transform.LineAggregator;
 
-import dev.lab.springbatch.domain.Movie;
+import dev.lab.springbatch.jobs.domain.Movie;
 
 public class MovieLineAggregator implements LineAggregator<Movie> {
 

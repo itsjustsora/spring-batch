@@ -1,4 +1,4 @@
-package dev.lab.springbatch.domain;
+package dev.lab.springbatch.jobs.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

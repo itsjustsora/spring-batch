@@ -1,4 +1,6 @@
-package dev.lab.springbatch.configuration;
+package dev.lab.springbatch.jobs.jdbc;
+
+import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -6,36 +8,36 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.database.JpaItemWriter;
-import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import dev.lab.springbatch.domain.Movie;
-import jakarta.persistence.EntityManagerFactory;
+import dev.lab.springbatch.jobs.domain.Movie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Configuration
+// @Configuration
 @RequiredArgsConstructor
-public class JpaItemJobConfiguration {
+public class JdbcPagingWriterJobConfiguration {
 
-    public static final int CHUNK_SIZE = 2;
+    public static final int CHUNK_SIZE = 100;
     public static final String ENCODING = "UTF-8";
 
-    private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
-    private final EntityManagerFactory entityManagerFactory;
+    private final JobRepository jobRepository;
+
+    // @Autowired
+    private DataSource dataSource;
 
     @Bean
     public FlatFileItemReader<Movie> flatFileItemReader() {
         return new FlatFileItemReaderBuilder<Movie>()
-            .name("flatFileItemReader")
+            .name("FlatFileItemReader")
             .resource(new ClassPathResource("./movies.csv"))
             .encoding(ENCODING)
             .delimited().delimiter(",")
@@ -45,30 +47,31 @@ public class JpaItemJobConfiguration {
     }
 
     @Bean
-    public JpaItemWriter<Movie> jpaItemWriter() {
-        return new JpaItemWriterBuilder<Movie>()
-            .entityManagerFactory(entityManagerFactory)
-            .usePersist(true)
+    public JdbcBatchItemWriter<Movie> jdbcBatchItemWriter() {
+        return new JdbcBatchItemWriterBuilder<Movie>()
+            .dataSource(dataSource)
+            .sql("INSERT INTO movie2 (title, genre, year) VALUES (:title, :genre, :year)")
+            .itemSqlParameterSourceProvider(new MovieItemSqlParameterSourceProvider())
             .build();
     }
 
     @Bean
-    public Step flatFileStep() {
-        log.info("==================== Init flatFileStep ====================");
+    public Step pagingWriterStep() {
+        log.info("==================== Init pagingWriterStep ====================");
 
-        return new StepBuilder("flatFileStep", jobRepository)
+        return new StepBuilder("pagingWriterStep", jobRepository)
             .<Movie, Movie>chunk(CHUNK_SIZE, transactionManager)
             .reader(flatFileItemReader())
-            .writer(jpaItemWriter())
+            .writer(jdbcBatchItemWriter())
             .build();
     }
 
     @Bean
-    public Job flatFileJob() {
-        log.info("==================== Init flatFileJob ====================");
-        return new JobBuilder("flatFileJob", jobRepository)
+    public Job pagingWriterJob() {
+        log.info("==================== Init pagingWriterJob ====================");
+        return new JobBuilder("pagingWriterJob", jobRepository)
             .incrementer(new RunIdIncrementer())
-            .start(flatFileStep())
+            .start(pagingWriterStep())
             .build();
     }
 }

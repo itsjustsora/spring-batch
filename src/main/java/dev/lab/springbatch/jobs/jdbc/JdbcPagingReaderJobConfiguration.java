@@ -1,4 +1,4 @@
-package dev.lab.springbatch.configuration;
+package dev.lab.springbatch.jobs.jdbc;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,15 +18,12 @@ import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuild
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
-import dev.lab.springbatch.domain.Movie;
-import lombok.RequiredArgsConstructor;
+import dev.lab.springbatch.jobs.domain.Movie;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

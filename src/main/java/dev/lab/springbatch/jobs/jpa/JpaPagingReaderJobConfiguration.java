@@ -1,4 +1,4 @@
-package dev.lab.springbatch.configuration;
+package dev.lab.springbatch.jobs.jpa;
 
 import java.util.Collections;
 
@@ -17,18 +17,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import dev.lab.springbatch.domain.Movie;
+import dev.lab.springbatch.jobs.domain.Movie;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-// @Configuration
+@Configuration
 @RequiredArgsConstructor
 public class JpaPagingReaderJobConfiguration {
 
     public static final int CHUNK_SIZE = 2;
     public static final String ENCODING = "UTF-8";
+    public static final String JPA_ITEM_WRITER_JOB = "JPA_ITEM_WRITER_JOB";
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
@@ -70,7 +71,7 @@ public class JpaPagingReaderJobConfiguration {
     @Bean
     public Job jpaPagingJob() {
         log.info("==================== Init jpaPagingJob ====================");
-        return new JobBuilder("jpaPagingJob", jobRepository)
+        return new JobBuilder(JPA_ITEM_WRITER_JOB, jobRepository)
             .incrementer(new RunIdIncrementer())
             .start(jpaPagingStep())
             .build();

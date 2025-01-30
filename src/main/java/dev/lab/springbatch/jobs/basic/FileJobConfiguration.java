@@ -1,8 +1,5 @@
-package dev.lab.springbatch.configuration;
+package dev.lab.springbatch.jobs.basic;
 
-import static javax.xml.transform.OutputKeys.*;
-
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.batch.core.Job;
@@ -12,23 +9,16 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
-import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import dev.lab.springbatch.domain.Movie;
-import dev.lab.springbatch.jobs.AggregateMovieProcessor;
-import dev.lab.springbatch.jobs.MovieFooter;
-import dev.lab.springbatch.jobs.MovieHeader;
-import dev.lab.springbatch.jobs.MovieLineAggregator;
+import dev.lab.springbatch.jobs.domain.Movie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,4 +1,4 @@
-package dev.lab.springbatch.jobs;
+package dev.lab.springbatch.jobs.basic;
 
 import java.io.IOException;
 import java.io.Writer;

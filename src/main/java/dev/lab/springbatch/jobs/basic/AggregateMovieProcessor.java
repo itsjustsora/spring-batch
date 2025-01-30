@@ -1,10 +1,10 @@
-package dev.lab.springbatch.jobs;
+package dev.lab.springbatch.jobs.basic;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.batch.item.ItemProcessor;
 
-import dev.lab.springbatch.domain.Movie;
+import dev.lab.springbatch.jobs.domain.Movie;
 
 public class AggregateMovieProcessor implements ItemProcessor<Movie, Movie> {
 
