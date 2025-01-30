@@ -1,5 +1,8 @@
 package dev.lab.springbatch.jobs.mybatis;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.batch.MyBatisBatchItemWriter;
 import org.mybatis.spring.batch.MyBatisPagingItemReader;
@@ -56,6 +59,13 @@ public class MyBatisWriterJobConfiguration {
         return new MyBatisBatchItemWriterBuilder<Movie>()
             .sqlSessionFactory(sqlSessionFactory)
             .statementId("dev.lab.springbatch.jobs.mybatis.insertMovies")
+            .itemToParameterConverter(item -> {
+                Map<String, Object> params = new HashMap<>();
+                params.put("title", item.getTitle());
+                params.put("genre", item.getGenre());
+                params.put("year", item.getYear());
+                return params;
+            })
             .build();
     }
 
