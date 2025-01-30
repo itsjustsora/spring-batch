@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.lab.springbatch.jobs.mybatis">
+
+    <resultMap id="movieResult" type="dev.lab.springbatch.jobs.domain.Movie">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="genre" column="genre"/>
+        <result property="year" column="year"/>
+    </resultMap>
+
+    <select id="selectMovies" resultMap="movieResult">
+        SELECT id, title, genre, year
+        FROM movie
+        LIMIT #{_skiprows}, #{_pagesize}
+    </select>
+</mapper>
