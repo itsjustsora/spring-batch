@@ -1,5 +1,7 @@
 package dev.lab.springbatch.jobs.mybatis;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.batch.MyBatisPagingItemReader;
 import org.mybatis.spring.batch.builder.MyBatisPagingItemReaderBuilder;
@@ -11,6 +13,8 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
+import org.springframework.batch.item.support.CompositeItemProcessor;
+import org.springframework.batch.item.support.builder.CompositeItemProcessorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
@@ -53,6 +57,15 @@ public class MyBatisReaderJobConfiguration {
             .build();
     }
 
+    @Bean
+    public CompositeItemProcessor<Movie, Movie> compositeItemProcessor() {
+        return new CompositeItemProcessorBuilder<Movie, Movie>()
+            .delegates(List.of(
+                new LowerCaseItemProcessor(),
+                new After20YearsItemProcessor()
+            ))
+            .build();
+    }
 
     @Bean
     public Step movieJdbcCursorStep() {
@@ -61,6 +74,7 @@ public class MyBatisReaderJobConfiguration {
         return new StepBuilder("movieJdbcCursorStep", jobRepository)
             .<Movie, Movie>chunk(CHUNK_SIZE, transactionManager)
             .reader(myBatisItemReader())
+            .processor(compositeItemProcessor())
             .writer(movieCursorFlatFileItemWriter())
             .build();
     }
