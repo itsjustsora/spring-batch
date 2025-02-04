@@ -8,7 +8,7 @@ spring:
 #    jdbc:
 #      initialize-schema: always
     job:
-      name: MYBATIS_CUSTOM_WRITER_JOB
+      name: NEXT_STEP_TASK
   jpa:
     hibernate:
       ddl-auto: update
