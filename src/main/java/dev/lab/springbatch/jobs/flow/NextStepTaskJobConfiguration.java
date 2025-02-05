@@ -1,18 +1,17 @@
 package dev.lab.springbatch.jobs.flow;
 
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.config.Task;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +26,8 @@ public class NextStepTaskJobConfiguration {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
+    private final JobExecutionListener jobExecutionListener;
+    private final StepExecutionListener stepExecutionListener;
 
     @Bean(name = "step01")
     public Step step01() {
@@ -48,6 +49,7 @@ public class NextStepTaskJobConfiguration {
                 log.info("Execute Step 01 Tasklet ...");
                 return RepeatStatus.FINISHED;
             }, transactionManager)
+            .listener(stepExecutionListener)
             .build();
     }
 
@@ -60,6 +62,7 @@ public class NextStepTaskJobConfiguration {
                 log.info("Execute Step 02 Tasklet ...");
                 return RepeatStatus.FINISHED;
             }, transactionManager)
+            .listener(stepExecutionListener)
             .build();
     }
 
@@ -71,6 +74,7 @@ public class NextStepTaskJobConfiguration {
             .incrementer(new RunIdIncrementer())
             .start(step01())
             .next(step02()) // Start 스텝이 수행하고 난 뒤 이동할 곳
+            .listener(jobExecutionListener)
             .build();
     }
 }

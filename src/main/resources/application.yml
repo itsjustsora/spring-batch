@@ -8,7 +8,7 @@ spring:
 #    jdbc:
 #      initialize-schema: always
     job:
-      name: STOP_STEP_TASK
+      name: NEXT_STEP_TASK
   jpa:
     hibernate:
       ddl-auto: update
